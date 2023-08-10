@@ -1,0 +1,9 @@
+- title: Email
+  url: mailto://wouldfain@gmail.com
+  icon: fas fa-envelope
+- title: Twitter
+  url: https://twitter.com/wouldfain
+  icon: fab fa-twitter
+- title: GitHub
+  url: https://github.com/LesserFullness
+  icon: fab fa-github
