@@ -90,7 +90,6 @@
         z-index: 1500;
       }
     </style>
-
     
     <!-- Custom styles for this template -->
     <link href="cover.css" rel="stylesheet">
@@ -184,22 +183,28 @@
   </header>
 
   <main class="px-3">
-    <h1><img src="https://readme-typing-svg.herokuapp.com/?lines=Hello%2C%20World!"></h1>
-    <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
-    <p class="lead">
-      <a href="#" class="btn btn-lg btn-light fw-bold border-white bg-white">Learn more</a>
-    </p>
-  </main>
+    <!--<h1><img src="https://readme-typing-svg.herokuapp.com/?lines=Hello%2C%20World!"></h1>-->
+    <script src ="https://cdn.jsdelivr.net/npm/typelighterjs/typelighter.min.js"></script>
+    <style>
+      p1{
+      /*父级*/
+        position:ablative;
+        /*子级*/
+        position:absolute;
+        left:50%;
+        top:50%;
+        transform:translate(-50%,-50%)
+      }
+    </style>
+    <p1>苏子曰：<span class="typeWriter" data-max="1.5" data-text='["客亦知夫水与月乎？逝者如斯，而未尝往也；盈虚者如彼，而卒莫消长也。盖将自其变者而观之，则天地曾不能以一瞬；自其不变者而观之，则物与我皆无尽也，而又何羡乎！且夫天地之间，物各有主，苟非吾之所有，虽一毫而莫取。惟江上之清风，与山间之明月，耳得之而为声，目遇之而成色，取之无禁，用之不竭。是造物者之无尽藏也，而吾与子之所共适。"]'</span></p1>
+
+
+      <!--<a href="#" class="btn btn-lg btn-light fw-bold border-white bg-white">Learn more</a>-->
+
+    </main>
   <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
-  <footer class="mt-auto text-white-50">
-    <p>&copy; 2023 Company, Inc. All rights reserved by <a href="https://github.com/LesserFullness" class="text-white">LesserFullness</a><a href="https://twitter.com/wouldfain" class="text-white"><svg class="bi me-2" width="24" height="24"><use xlink:href="#twitter"/></svg></a>.</p>
-    
-    <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-      <li class="ms-3"><a class="link-body-emphasis" href="https://twitter.com/wouldfain"><svg class="bi" width="24" height="24"><use xlink:href="#twitter"/></svg></a>
-      <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#twitter"/></svg></a></li>
-      <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#instagram"/></svg></a></li>
-      <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#facebook"/></svg></a></li>
-    </ul>
+    <footer class="mt-auto text-white-50">
+    <p>&copy; 2023 Company, Inc. All rights reserved by <a href="https://github.com/LesserFullness" class="text-white">LesserFullness</a> , <a href="https://twitter.com/wouldfain" class="text-white">@wouldfain</a>.</p>
   </footer>
 </div>
 <script src="./assets/dist/js/bootstrap.bundle.min.js"></script>
