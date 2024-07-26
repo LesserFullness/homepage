@@ -157,7 +157,18 @@
     
 <main class="container">
   <div class="bg-body-tertiary p-5 rounded mt-3">
-    <h1>小海豚</h1>
+    <h1>
+      <i class="fa fa-cog fa-spin fa-1x fa-fw"></i><span>小海豚已启航<span id="days1"
+        style="font-weight:800; color:#ED712E;">0</span>天</span>
+      <script>
+      let s11 = '2024-7-2';//设置为你的建站时间
+      s11 = new Date(s11.replace(/-/g, "/"));
+      s22 = new Date();
+      let days1 = s22.getTime() - s11.getTime();
+      let number_of_days1 = parseInt(days1 / (1000 * 60 * 60 * 24));
+      document.getElementById('days1').innerHTML = number_of_days1;
+      </script>
+    </h1>
     <p class="lead">
       <img id="slideshow" src="image1.jpg">  
   
