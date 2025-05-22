@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>成长轨迹</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- 引入必要的库 -->
+  <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+  <h1 style="text-align:center;">📅 知周的时间轴</h1>
+
+  <!-- 🔍 搜索栏 -->
+  <div style="text-align:center; margin-bottom: 20px;">
+    <input type="text" id="searchInput" placeholder="🔍 搜索关键字..." style="padding: 0.5rem; width: 60%; max-width: 400px;">
+  </div>
+
+  <!-- ➕ 添加事件表单 -->
+  <div style="text-align:center; margin-bottom: 30px;">
+    <h2>➕ 添加新事件</h2>
+    <input type="text" id="dateInput" placeholder="日期（如 2025年5月20日）" style="margin: 5px; padding: 5px; width: 250px;"><br>
+    <input type="text" id="textInput" placeholder="事件描述" style="margin: 5px; padding: 5px; width: 250px;"><br>
+    <input type="file" id="imageInput" accept="image/*" style="margin: 5px; padding: 5px; width: 250px;"><br>
+    <button id="addBtn" style="padding: 8px 16px;">添加事件</button>
+  </div>
+
+  <!-- 📄 导出按钮 -->
+  <div style="text-align:center; margin-bottom: 30px;">
+    <button id="exportBtn" style="padding: 8px 16px;">导出为 PDF</button>
+  </div>
+
+  <div class="timeline" id="timeline"></div>
+
+  <script>
+    let allEvents = [];
+
+    function parseDate(dateStr) {
+      const match = dateStr.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+      if (match) {
+        const [_, year, month, day] = match;
+        return new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+      }
+      return new Date(dateStr);
+    }
+
+    function getLunarDate(dateStr) {
+      const match = dateStr.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+      if (match) {
+        const [_, year, month, day] = match;
+        const solar = Solar.fromYmd(parseInt(year), parseInt(month), parseInt(day));
+        return solar.getLunar().toString();
+      }
+      return '';
+    }
+
+    function renderTimeline(data) {
+      const container = document.getElementById("timeline");
+      container.innerHTML = '';
+
+      const sorted = [...data].sort((a, b) => parseDate(b.date) - parseDate(a.date));
+
+      const grouped = sorted.reduce((acc, item) => {
+        const year = item.date.substring(0, 4);
+        if (!acc[year]) acc[year] = [];
+        acc[year].push(item);
+        return acc;
+      }, {});
+
+      const years = Object.keys(grouped).sort((a, b) => b - a);
+
+      let count = 0;
+      years.forEach(year => {
+        container.insertAdjacentHTML('beforeend', `<h2 class="year-header">${year}</h2>`);
+        grouped[year].forEach(item => {
+          const side = count++ % 2 === 0 ? "left" : "right";
+          const lunar = getLunarDate(item.date);
+          const html = `
+            <div class="entry ${side}">
+              <h3>${item.date}</h3>
+              <p>${item.text}</p>
+              ${lunar ? `<p>农历：${lunar}</p>` : ''}
+              ${item.image ? `<img src="${item.image}" alt="${item.date}">` : ''}
+            </div>
+          `;
+          container.insertAdjacentHTML("beforeend", html);
+        });
+      });
+    }
+
+    function addSearch(data) {
+      const input = document.getElementById("searchInput");
+      input.addEventListener("input", () => {
+        const keyword = input.value.toLowerCase();
+        const filtered = data.filter(item =>
+          item.date.includes(keyword) ||
+          item.text.toLowerCase().includes(keyword)
+        );
+        renderTimeline(filtered);
+      });
+    }
+
+    function setupAddEvent() {
+      const addBtn = document.getElementById("addBtn");
+      addBtn.addEventListener("click", () => {
+        const date = document.getElementById("dateInput").value.trim();
+        const text = document.getElementById("textInput").value.trim();
+        const imageFile = document.getElementById("imageInput").files[0];
+
+        if (!date || !text) {
+          alert("请输入日期和描述！");
+          return;
+        }
+
+        if (imageFile) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const newEvent = { date, text, image: e.target.result };
+            allEvents.push(newEvent);
+            const userEvents = loadLocalEvents();
+            userEvents.push(newEvent);
+            saveLocalEvents(userEvents);
+            renderTimeline(allEvents);
+          };
+          reader.readAsDataURL(imageFile);
+        } else {
+          const newEvent = { date, text, image: '' };
+          allEvents.push(newEvent);
+          const userEvents = loadLocalEvents();
+          userEvents.push(newEvent);
+          saveLocalEvents(userEvents);
+          renderTimeline(allEvents);
+        }
+      });
+    }
+
+    function loadLocalEvents() {
+      const local = localStorage.getItem("timelineEvents");
+      return local ? JSON.parse(local) : [];
+    }
+
+    function saveLocalEvents(events) {
+      localStorage.setItem("timelineEvents", JSON.stringify(events));
+    }
+
+    function setupExport() {
+      const exportBtn = document.getElementById("exportBtn");
+      exportBtn.addEventListener("click", () => {
+        const { jsPDF } = window.jspdf;
+        html2canvas(document.getElementById("timeline")).then(canvas => {
+          const imgData = canvas.toDataURL('image/png');
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const imgProps = pdf.getImageProperties(imgData);
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+          pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+          pdf.save("timeline.pdf");
+        });
+      });
+    }
+
+    async function init() {
+      let serverData = [];
+      try {
+        const res = await fetch('data.json');
+        serverData = await res.json();
+      } catch (e) {
+        console.warn("未能加载 data.json，使用空数据。");
+      }
+      const userData = loadLocalEvents();
+      allEvents = [...serverData, ...userData];
+      renderTimeline(allEvents);
+      addSearch(allEvents);
+      setupAddEvent();
+      setupExport();
+    }
+
+    init();
+    document.getElementById("addBtn").addEventListener("click", () => {
+      alert("按钮已触发！");
+    });
+
+  </script>
+
+</body>
+</html>
