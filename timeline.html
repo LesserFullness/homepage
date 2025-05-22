@@ -59,7 +59,7 @@
       const match = dateStr.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
       if (match) {
         const [_, y, m, d] = match;
-        const solar = Lunar.Solar.fromYmd(parseInt(y), parseInt(m), parseInt(d));
+        const solar = Solar.fromYmd(parseInt(y), parseInt(m), parseInt(d));
         return solar.getLunar().toString();
       }
       return '';
