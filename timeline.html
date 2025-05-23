@@ -12,54 +12,97 @@
 
   <h1 style="text-align:center;">📅 知周的时间轴</h1>
   <p style="text-align:center;">
-  <a href="/index.html" target="_blank">返回首页</a>
+    <a href="/index.html" target="_blank">返回首页</a>
   </p>
 
-  <!-- 🔍 搜索 -->
   <div style="text-align:center; margin-bottom: 20px;">
-    <input type="text" id="searchInput" placeholder="🔍 搜索事件..." style="padding: 0.5rem; width: 60%; max-width: 400px;">
+    <input type="text" id="searchInput" placeholder="🔍 搜索关键字..." style="padding: 0.5rem; width: 60%; max-width: 400px;">
   </div>
 
-  <!-- ➕ 添加事件 -->
   <div style="text-align:center; margin-bottom: 30px;">
     <h2>➕ 添加新事件</h2>
-    <input type="text" id="dateInput" placeholder="如 2025年5月22日" style="margin: 5px; padding: 5px; width: 250px;"><br>
+    <input type="text" id="dateInput" placeholder="日期（如 2025年05月20日）" style="margin: 5px; padding: 5px; width: 250px;"><br>
     <input type="text" id="textInput" placeholder="事件描述" style="margin: 5px; padding: 5px; width: 250px;"><br>
     <input type="file" id="imageInput" accept="image/*" style="margin: 5px; padding: 5px; width: 250px;"><br>
     <button id="addBtn" style="padding: 8px 16px;">添加事件</button>
   </div>
 
-  <!-- 📄 导出 PDF -->
-  <div style="text-align:center; margin-bottom: 20px;">
-    <button id="exportBtn" style="padding: 8px 16px;">导出为 PDF</button>
-  </div>
-
-  <!-- 📁 导入导出 JSON -->
   <div style="text-align:center; margin-bottom: 30px;">
-    <input type="file" id="importJson" accept=".json" style="margin: 5px;">
-    <button id="exportJsonBtn" style="padding: 8px 16px;">导出为 JSON</button>
+    <button id="exportBtn" style="padding: 8px 16px;">导出为 PDF</button>
+    <button onclick="clearLocalEvents()" style="padding: 8px 16px; background-color: #e74c3c; color: white;">🗑️ 清除本地数据</button>
   </div>
 
-  <!-- 时间轴 -->
-  <div class="timeline" id="timeline" style="max-width: 900px; margin: auto;"></div>
+  <div class="timeline" id="timeline"></div>
 
+  <!-- ✅ 添加滚动按钮 -->
+  <button onclick="scrollToBottom()" style="
+    position: fixed;
+    right: 20px;
+    bottom: 70px;
+    padding: 10px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 1000;
+  ">
+    ⬇️ 查看最新事件
+  </button>
+
+  <button onclick="scrollToTop()" style="
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    padding: 10px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 1000;
+  ">
+    ⬆️ 返回顶部
+  </button>
+
+  <!-- ✅ 添加 JS 函数 -->
+  <script>
+    function scrollToBottom() {
+      setTimeout(() => {
+        window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+        });
+      }, 100); // 延迟确保 DOM 渲染完成
+    }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+  </script>
+  
+  <!-- 你原本的脚本继续保留 -->
   <script>
     let allEvents = [];
 
     function parseDate(dateStr) {
       const match = dateStr.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
       if (match) {
-        const [_, y, m, d] = match;
-        return new Date(`${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`);
+        const [_, year, month, day] = match;
+        return new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
       }
       return new Date(dateStr);
     }
 
+
     function getLunarDate(dateStr) {
       const match = dateStr.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
       if (match) {
-        const [_, y, m, d] = match;
-        const solar = Solar.fromYmd(parseInt(y), parseInt(m), parseInt(d));
+        const [_, year, month, day] = match;
+        const solar = Solar.fromYmd(parseInt(year), parseInt(month), parseInt(day));
         return solar.getLunar().toString();
       }
       return '';
@@ -68,32 +111,38 @@
     function renderTimeline(data) {
       const container = document.getElementById("timeline");
       container.innerHTML = '';
-      const sorted = [...data].sort((a, b) => parseDate(b.date) - parseDate(a.date));
+
+      const sorted = [...data].sort((a, b) => parseDate(a.date) - parseDate(b.date)); // 时间升序排序
+
 
       const grouped = sorted.reduce((acc, item) => {
-        const year = item.date.slice(0, 4);
+        const year = parseDate(item.date).getFullYear();
         if (!acc[year]) acc[year] = [];
         acc[year].push(item);
         return acc;
       }, {});
-      const years = Object.keys(grouped).sort((a, b) => b - a);
 
-      let count = 0;
+      const years = Object.keys(grouped).sort((a, b) => a - b);//按年份升序显示分组
+
       years.forEach(year => {
-        container.insertAdjacentHTML('beforeend', `<h2 class="year-header">${year}</h2>`);
-        grouped[year].forEach(item => {
-          const side = count++ % 2 === 0 ? "left" : "right";
+        let groupHTML = `<div class="year-group">`;
+        groupHTML += `<h2 class="year-header">${year}</h2>`;
+
+        grouped[year].forEach((item, index) => {
           const lunar = getLunarDate(item.date);
-          const html = `
+          const side = (index % 2 === 0) ? 'left' : 'right';
+          groupHTML += `
             <div class="entry ${side}">
-              <h3>${item.date}</h3>
-              <p>${item.text}</p>
-              ${lunar ? `<p>农历：${lunar}</p>` : ''}
-              ${item.image ? `<img src="${item.image}" alt="${item.date}" style="max-width:100%; border-radius:8px;">` : ''}
+            <h3>${item.date}</h3>
+            <p>${item.text}</p>
+            ${lunar ? `<p>农历：${lunar}</p>` : ''}
+            ${item.image ? `<img src="${item.image}" alt="${item.date}">` : ''}
             </div>
           `;
-          container.insertAdjacentHTML("beforeend", html);
         });
+
+        groupHTML += `</div>`;
+        container.insertAdjacentHTML("beforeend", groupHTML);
       });
     }
 
@@ -111,6 +160,7 @@
         const date = document.getElementById("dateInput").value.trim();
         const text = document.getElementById("textInput").value.trim();
         const imageFile = document.getElementById("imageInput").files[0];
+
         if (!date || !text) {
           alert("请输入日期和描述！");
           return;
@@ -123,6 +173,9 @@
           saveLocalEvents(localEvents);
           allEvents.push(newEvent);
           renderTimeline(allEvents);
+          document.getElementById("dateInput").value = '';
+          document.getElementById("textInput").value = '';
+          document.getElementById("imageInput").value = '';
         };
 
         if (imageFile) {
@@ -131,17 +184,8 @@
           reader.readAsDataURL(imageFile);
         } else {
           saveEvent();
+          scrollToBottom();
         }
-      });
-    }
-
-    function addSearch(data) {
-      document.getElementById("searchInput").addEventListener("input", () => {
-        const keyword = document.getElementById("searchInput").value.toLowerCase();
-        const filtered = data.filter(item =>
-          item.date.includes(keyword) || item.text.toLowerCase().includes(keyword)
-        );
-        renderTimeline(filtered);
       });
     }
 
@@ -151,58 +195,37 @@
         html2canvas(document.getElementById("timeline")).then(canvas => {
           const imgData = canvas.toDataURL('image/png');
           const pdf = new jsPDF('p', 'mm', 'a4');
-          const width = pdf.internal.pageSize.getWidth();
-          const height = (canvas.height * width) / canvas.width;
-          pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+          pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
           pdf.save("timeline.pdf");
         });
       });
     }
 
-    function setupJsonImportExport() {
-      const importInput = document.getElementById("importJson");
-      const exportBtn = document.getElementById("exportJsonBtn");
+    function clearLocalEvents() {
+      if (confirm("确定要删除本地保存的事件吗？此操作无法恢复。")) {
+        localStorage.removeItem("timelineEvents");
+        location.reload();
+      }
+    }
 
-      importInput.addEventListener("change", (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = e => {
-          try {
-            const imported = JSON.parse(e.target.result);
-            if (Array.isArray(imported)) {
-              const merged = [...loadLocalEvents(), ...imported];
-              saveLocalEvents(merged);
-              allEvents = merged;
-              renderTimeline(allEvents);
-              alert("导入成功！");
-            } else {
-              alert("无效的 JSON 文件！");
-            }
-          } catch (err) {
-            alert("读取失败：" + err.message);
-          }
-        };
-        reader.readAsText(file);
-      });
-
-      exportBtn.addEventListener("click", () => {
-        const dataStr = JSON.stringify(allEvents, null, 2);
-        const blob = new Blob([dataStr], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "timeline-events.json";
-        a.click();
-        URL.revokeObjectURL(url);
+    function addSearch(data) {
+      const input = document.getElementById("searchInput");
+      input.addEventListener("input", () => {
+        const keyword = input.value.toLowerCase();
+        const filtered = data.filter(item =>
+          item.date.includes(keyword) ||
+          item.text.toLowerCase().includes(keyword)
+        );
+        renderTimeline(filtered);
       });
     }
 
     async function init() {
       let serverData = [];
       try {
-        const res = await fetch("data.json");
+        const res = await fetch('data.json');
         serverData = await res.json();
       } catch {
         console.warn("未能加载 data.json，使用空数据。");
@@ -210,26 +233,13 @@
       const userData = loadLocalEvents();
       allEvents = [...serverData, ...userData];
       renderTimeline(allEvents);
-      addSearch(allEvents);
       setupAddEvent();
       setupExport();
-      setupJsonImportExport();
+      addSearch(allEvents);
     }
 
     init();
   </script>
-
-  <style>
-    .timeline { position: relative; padding: 20px 0; }
-    .year-header { text-align: center; font-size: 1.5em; margin-top: 40px; }
-    .entry {
-      width: 45%; padding: 20px; margin: 20px;
-      background: #f5f5f5; border-radius: 12px; box-shadow: 0 0 6px rgba(0,0,0,0.1);
-    }
-    .left { float: left; clear: both; }
-    .right { float: right; clear: both; }
-    img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
-  </style>
 
 </body>
 </html>
