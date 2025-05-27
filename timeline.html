@@ -16,7 +16,7 @@
   <div style="text-align:center; margin-bottom: 20px;">
     <input type="text" id="searchInput" placeholder="🔍 搜索关键字..." style="padding: 0.5rem; width: 60%; max-width: 400px;">
   </div>
-<!--
+
   <div style="text-align:center; margin-bottom: 30px;">
     <h2>➕ 添加新事件</h2>
     <input type="text" id="dateInput" placeholder="日期（如 2025年05月20日）" style="margin: 5px; padding: 5px; width: 250px;"><br>
@@ -24,7 +24,7 @@
     <input type="file" id="imageInput" accept="image/*" style="margin: 5px; padding: 5px; width: 250px;"><br>
     <button id="addBtn" style="padding: 8px 16px;">添加事件</button>
   </div>
--->
+
   <div style="text-align:center; margin-bottom: 30px;">
     <button id="exportBtn" style="padding: 8px 16px;">导出为 PDF</button>
     <button onclick="clearLocalEvents()" style="padding: 8px 16px; background-color: #e74c3c; color: white;">🗑️ 清除本地数据</button>
@@ -36,7 +36,7 @@
   </div>
   <!-- 添加年份目录容器到 HTML fixed页脚，sticky顶部-->
   <div id="year-nav" style="
-    position: sticky;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
@@ -53,7 +53,8 @@
   "></div>
   <div class="timeline" id="timeline"></div>
   <!-- 在时间轴底部添加一个额外的「透明占位块」来留出足够的滚动空间 <div class="timeline-padding"></div>-->
-  
+  <div style="height: 80px;"></div>
+
 
   <!-- ✅ 添加滚动按钮 -->
   <button onclick="scrollToBottom()" style="
@@ -113,6 +114,7 @@
       setTimeout(() => {
         window.scrollTo({
         top: document.body.scrollHeight,
+        top: document.body.scrollHeight - 120, // 减去底部导航高度
         behavior: 'smooth'
         });
       }, 100); // 延迟确保 DOM 渲染完成
@@ -380,7 +382,7 @@
       const userData = loadLocalEvents();
       allEvents = [...serverData, ...userData];
       renderTimeline(allEvents);
-      //setupAddEvent();
+      setupAddEvent();
       setupExport();
       setupJsonImportExport(); // ✅ 添加 JSON 导入导出
       addSearch(allEvents);
@@ -391,6 +393,7 @@
 
     init();
   </script>
+
 
 </body>
 </html>
