@@ -202,6 +202,12 @@
             <h3>${item.date}</h3>
             <p>${item.text}</p>
             ${lunar ? `<p>农历：${lunar}</p>` : ''}
+            ${(() => {
+              const birthDate = new Date("2024-07-02");
+              const current = parseDate(item.date);
+              const diff = Math.floor((current - birthDate) / (1000 * 60 * 60 * 24));
+              return `<p style="color:#888;">宝宝已经出生 ${diff >= 0 ? diff : '尚未出生'} 天</p>`;
+            })()}
             ${item.image ? `<img src="${item.image}" alt="${item.date}">` : ''}
             </div>
           `;
