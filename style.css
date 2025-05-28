@@ -50,6 +50,7 @@ body {
   color: #0056b3;
 }
 
+
 /* 高亮样式 */
 .year-btn.active {
   background-color: #007bff !important;
@@ -57,6 +58,15 @@ body {
   font-weight: bold;
 }
 
+.year-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px; /* 根据实际高度调整 */
+  background: rgba(255, 255, 255, 0.9); /* 半透明背景 */
+  z-index: 999;
+}
 
 /* 基础entry样式 */
 .entry {
@@ -114,6 +124,8 @@ body {
   margin-top: 8px;
   border-radius: 6px;
 }
+
+
 
 
 
