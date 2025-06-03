@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>成长轨迹</title>
   <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--移动端适配优化-->
   <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.min.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -68,59 +69,33 @@
 
 
   <!-- ✅ 添加滚动按钮 -->
-  <button onclick="scrollToBottom()" style="
-    position: fixed;
-    right: 20px;
-    bottom: 110px;
-    padding: 10px 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    cursor: pointer;
-    z-index: 1000;
-  ">
-    ⬇️ 查看最新事件
-  </button>
+  <div class="fixed-buttons" style="position: fixed; right: 20px; bottom: 20px; z-index: 1000;">
+    <button onclick="scrollToBottom()">⬇️ 查看最新事件</button>
+    <button onclick="scrollToTop()">⬆️ 返回顶部</button>
+    <a href="/index.html"><button>⬅️ 返回首页</button></a>
+  </div>
 
-  <button onclick="scrollToTop()" style="
-    position: fixed;
-    right: 20px;
-    bottom: 70px;
-    padding: 10px 16px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    cursor: pointer;
-    z-index: 1000;
-  ">
-    ⬆️ 返回顶部
-  </button>
-<!-- 返回首页按钮 -->
-  <a href="/index.html" style="
-    position: fixed;
-    right: 20px;
-    bottom: 20px; /* 调整这个值以分隔两个按钮 */
-    padding: 10px 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    text-decoration: none; /* 去掉下划线 */
-    cursor: pointer;
-    z-index: 1000;
-  ">
-    <button>
-      ⬅️ 返回首页
-    </button>
-  </a>
 
   <!-- ✅ 添加 JS 函数 -->
   <script>
+    document.addEventListener('click', function (e) {
+      if (e.target.tagName === 'IMG') {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        modalImg.src = e.target.src;
+        modal.style.display = 'flex';
+      }
+    });
+
+     // 页面加载后自动填入今天的日期
+    document.addEventListener("DOMContentLoaded", function () {
+      const dateInput = document.getElementById("dateInput");
+      const now = new Date();
+      const formatted = now.getFullYear() + "年" +
+                      String(now.getMonth() + 1).padStart(2, '0') + "月" +
+                      String(now.getDate()).padStart(2, '0') + "日";
+      dateInput.value = formatted;
+    });
     function scrollToBottom() {
       setTimeout(() => {
         window.scrollTo({
@@ -402,6 +377,18 @@
       });
     }
 
+    // ✅ 图片点击放大功能
+    document.addEventListener("click", function (e) {
+      if (e.target.tagName === "IMG" && e.target.closest(".entry")) {
+        const modal = document.getElementById("imageModal");
+        const modalImg = document.getElementById("modalImage");
+        modal.style.display = "flex";
+        modalImg.src = e.target.src;
+      } else if (e.target.id === "imageModal" || e.target.id === "modalImage") {
+        document.getElementById("imageModal").style.display = "none";
+      }
+    });
+
     async function init() {
       let serverData = [];
       try {
@@ -425,6 +412,26 @@
 
     init();
   </script>
+
+  <div id="imageModal" onclick="this.style.display='none'">
+    <img src="" id="modalImage">
+  </div>
+  <!-- ✅ 放大查看图片的遮罩层 -->
+  <div id="imageModal" style="
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+    align-items: center;
+    justify-content: center;
+    ">
+    <img id="modalImage" src="" style="max-width: 90%; max-height: 90%;">
+  </div>
 
 
 </body>
