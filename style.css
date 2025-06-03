@@ -13,7 +13,6 @@ body {
   min-height: 100vh;
 }
 
-/* 时间轴中线 */
 .timeline::before {
   content: "";
   position: absolute;
@@ -49,14 +48,12 @@ body {
   color: #0056b3;
 }
 
-/* 高亮样式 */
 .year-btn.active {
   background-color: #007bff !important;
   color: white;
   font-weight: bold;
 }
 
-/* 基础entry样式 */
 .entry {
   position: relative;
   width: 40%;
@@ -68,7 +65,6 @@ body {
   clear: both;
 }
 
-/* 左侧entry */
 .entry.left {
   float: left;
   text-align: right;
@@ -76,7 +72,6 @@ body {
   margin-right: auto;
 }
 
-/* 右侧entry */
 .entry.right {
   float: right;
   text-align: left;
@@ -84,7 +79,6 @@ body {
   margin-left: auto;
 }
 
-/* 左侧箭头 */
 .entry.left::after {
   content: "";
   position: absolute;
@@ -95,7 +89,6 @@ body {
   border-color: transparent transparent transparent white;
 }
 
-/* 右侧箭头 */
 .entry.right::after {
   content: "";
   position: absolute;
@@ -124,7 +117,6 @@ img:active {
   transform: scale(0.98);
 }
 
-/* 全屏预览容器 */
 #imageModal {
   position: fixed;
   top: 0;
@@ -145,6 +137,36 @@ img:active {
   border-radius: 10px;
 }
 
+#year-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  padding: 10px 0;
+  z-index: 900;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.fixed-buttons {
+  position: fixed;
+  right: 16px;
+  bottom: 80px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fixed-buttons button {
+  padding: 10px;
+  font-size: 14px;
+  min-width: 100px;
+}
+
 @media (max-width: 600px) {
   input[type="text"],
   button,
@@ -155,11 +177,6 @@ img:active {
     display: block;
   }
 
-  #year-nav {
-    padding: 6px 8px;
-    gap: 6px;
-  }
-
   .timeline .entry {
     width: 90%;
     margin: 10px auto;
@@ -168,31 +185,6 @@ img:active {
 
   .year-header {
     font-size: 1.4rem;
-  }
-}
-
-/* 优化 fixed-buttons 样式，避免遮挡底部年份导航 */
-.fixed-buttons {
-  position: fixed;
-  right: 20px;
-  bottom: 80px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.fixed-buttons button,
-.fixed-buttons a button {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-}
-
-@media (max-width: 600px) {
-  .fixed-buttons {
-    right: 10px;
-    bottom: 100px;
   }
 }
 
