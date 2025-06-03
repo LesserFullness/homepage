@@ -115,6 +115,81 @@ body {
   border-radius: 6px;
 }
 
+img {
+  max-width: 100%;
+  height: auto;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.3s;
+}
+
+img:active {
+  transform: scale(0.98);
+}
+
+/* 全屏预览容器 */
+#imageModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+#imageModal img {
+  max-width: 90%;
+  max-height: 90%;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  border-radius: 10px;
+}
+
+@media (max-width: 600px) {
+  input[type="text"],
+  button,
+  #uploadWidgetBtn {
+    width: 90% !important;
+    max-width: 100%;
+    margin: 5px auto;
+    display: block;
+  }
+
+  #year-nav {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+
+  .timeline .entry {
+    width: 90%;
+    margin: 10px auto;
+    font-size: 15px;
+  }
+
+  .year-header {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .fixed-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    right: 10px !important;
+    bottom: 20px !important;
+  }
+
+  .fixed-buttons button,
+  .fixed-buttons a button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
+}
 
 
 @media screen and (max-width: 768px) {
