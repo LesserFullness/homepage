@@ -11,7 +11,6 @@ body {
   margin: 0 auto;
   padding: 40px 0;
   min-height: 100vh;
-  
 }
 
 /* 时间轴中线 */
@@ -28,7 +27,7 @@ body {
 }
 
 .timeline-padding {
-  height: 120px; /* 该高度根据你底部导航实际高度调整，比如 80px、120px 等 */
+  height: 120px;
 }
 
 .year-group {
@@ -37,7 +36,7 @@ body {
 }
 
 .year-header {
-  cursor: pointer;/*给年份加样式（高亮、鼠标手势）*/
+  cursor: pointer;
   color: #007bff;
   text-decoration: underline;
   text-align: center;
@@ -57,34 +56,32 @@ body {
   font-weight: bold;
 }
 
-
 /* 基础entry样式 */
 .entry {
   position: relative;
-  width: 40%;         /* 宽度调小点 */
+  width: 40%;
   background: white;
   padding: 15px 20px;
   margin: 20px 0;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   clear: both;
-  
 }
 
-/* 左侧entry，靠中线偏左，整体左边留空 */
+/* 左侧entry */
 .entry.left {
   float: left;
   text-align: right;
-  margin-left: 10%;    /* 离左边框一定距离 */
-  margin-right: auto;  /* 右边自动留空 */
+  margin-left: 10%;
+  margin-right: auto;
 }
 
-/* 右侧entry，靠中线偏右，整体右边留空 */
+/* 右侧entry */
 .entry.right {
   float: right;
   text-align: left;
-  margin-right: 10%;   /* 离右边框一定距离 */
-  margin-left: auto;   /* 左边自动留空 */
+  margin-right: 10%;
+  margin-left: auto;
 }
 
 /* 左侧箭头 */
@@ -174,25 +171,30 @@ img:active {
   }
 }
 
-@media (max-width: 600px) {
-  .fixed-buttons {
-    position: fixed;
-    right: 20px;
-    bottom: 100px; /* ⬅⬅⬅ 增大底部间距，避免遮挡年份 */
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .fixed-buttons button,
-  .fixed-buttons a button {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-  }
+/* 优化 fixed-buttons 样式，避免遮挡底部年份导航 */
+.fixed-buttons {
+  position: fixed;
+  right: 20px;
+  bottom: 80px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
+.fixed-buttons button,
+.fixed-buttons a button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+}
+
+@media (max-width: 600px) {
+  .fixed-buttons {
+    right: 10px;
+    bottom: 100px;
+  }
+}
 
 @media screen and (max-width: 768px) {
   .entry, .entry.right, .entry.left {
